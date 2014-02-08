@@ -46,7 +46,7 @@ def read_file(filename, out_mat_filename):
     np.save('pos', np.array(all_pos))
     np.save('isH', isH)
     
-    scipy.io.savemat(out_mat_filename,{'pos':np.array(all_pos[::10]), 't':np.array(t[::10]), 'box':np.array(all_box[::10]), 'isH':isH[::10]})
+    scipy.io.savemat(out_mat_filename,{'pos':np.array(all_pos[::10]), 't':np.array(t[::10]), 'box':np.array(all_box[::10]), 'isH':isH})
 
 if __name__ == '__main__':
     filename = 'all_atom_coordinate.gro'
