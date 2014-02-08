@@ -40,13 +40,19 @@ def read_file(filename, out_mat_filename):
     for i in range(n):
         if atom_type[i][0] == 'H':
             isH[i] = 1
-    
+
+    isCA = np.zeros(n)
+    for i in range(n):
+        if atom_type[i] == 'CA':
+            isCA[i] = 1
+
     np.save('box', np.array(all_box))
     np.save('time', np.array(t))
     np.save('pos', np.array(all_pos))
     np.save('isH', isH)
+    np.save('isCA', isCA)
     
-    scipy.io.savemat(out_mat_filename,{'pos':np.array(all_pos[::10]), 't':np.array(t[::10]), 'box':np.array(all_box[::10]), 'isH':isH})
+    scipy.io.savemat(out_mat_filename,{'pos':np.array(all_pos[::10]), 't':np.array(t[::10]), 'box':np.array(all_box[::10]), 'isH':isH, 'isCA':isCA})
 
 if __name__ == '__main__':
     filename = 'all_atom_coordinate.gro'
