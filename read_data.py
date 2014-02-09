@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.io
 
-def read_file(filename, out_mat_filename):
+def read_coordinates(filename, out_mat_filename):
     dim = 3
     
     f = open(filename, 'r')
@@ -54,9 +54,32 @@ def read_file(filename, out_mat_filename):
     
     scipy.io.savemat(out_mat_filename,{'pos':np.array(all_pos[::10]), 't':np.array(t[::10]), 'box':np.array(all_box[::10]), 'isH':isH, 'isCA':isCA})
 
+def read_rmsd(filename, output_filename):
+    f = open(filename, 'r')
+
+    for i in range(5):
+        f.readline()
+
+    t = []
+    rmsd = []
+
+    line = f.readline()
+    while line != '':
+        t.append(float(line.split()[0]))
+        rmsd.append(float(line.split()[1]))
+        line = f.readline()
+
+    np.save('t_rmsd.npy', np.array(t))
+    np.save('rmsd.npy', np.array(rmsd))
+
+    scipy.io.savemat(output_filename,{'t':np.array(t[::10]), 'rmsd':np.array(rmsd[::10])})
+    
 if __name__ == '__main__':
     filename = 'all_atom_coordinate.gro'
     output_filename = 'all_atom_data.mat'
-    
-    read_file(filename, output_filename)
 
+    rmsd_filename = 'rmsd_c_alpha.xvg'
+    rmsd_output_filename = 'rmsd_data.mat'
+    
+    read_coordinates(filename, output_filename)
+    read_rmsd(rmsd_filename, rmsd_output_filename)
