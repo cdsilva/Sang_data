@@ -1,6 +1,8 @@
 import numpy as np
 import scipy.io
 
+mat_stride = 4
+
 def read_coordinates(filename, out_mat_filename):
     dim = 3
     
@@ -52,7 +54,7 @@ def read_coordinates(filename, out_mat_filename):
     np.save('isH', isH)
     np.save('isCA', isCA)
     
-    scipy.io.savemat(out_mat_filename,{'pos':np.array(all_pos[::10]), 't':np.array(t[::10]), 'box':np.array(all_box[::10]), 'isH':isH, 'isCA':isCA})
+    scipy.io.savemat(out_mat_filename,{'pos':np.array(all_pos[::mat_stride]), 't':np.array(t[::mat_stride]), 'box':np.array(all_box[::mat_stride]), 'isH':isH, 'isCA':isCA})
 
 def read_rmsd(filename, output_filename):
     f = open(filename, 'r')
@@ -72,7 +74,7 @@ def read_rmsd(filename, output_filename):
     np.save('t_rmsd.npy', np.array(t))
     np.save('rmsd.npy', np.array(rmsd))
 
-    scipy.io.savemat(output_filename,{'t':np.array(t[::10]), 'rmsd':np.array(rmsd[::10])})
+    scipy.io.savemat(output_filename,{'t':np.array(t[::mat_stride]), 'rmsd':np.array(rmsd[::mat_stride])})
     
 if __name__ == '__main__':
     filename = 'all_atom_coordinate.gro'
