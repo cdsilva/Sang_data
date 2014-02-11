@@ -22,7 +22,7 @@ load all_atom_data
 
 %%
 step = 10;
-start = 5000;
+start = 1;
 pos = pos(:,:,start:step:end);
 t = t(start:step:end);
 rmsd = rmsd(start:step:end);
@@ -53,6 +53,8 @@ ind9 = find(residue_ind == 9);
 for i=1:nsteps
     salt_bridge(i) = norm(mean(pos(ind16,:,i)) - mean(pos(ind9,:,i)));
 end
+
+return
 %% calculate rmsd
 
 natoms = size(pos, 1);
