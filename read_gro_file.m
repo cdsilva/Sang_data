@@ -25,7 +25,6 @@ if mod(nsteps, 1) ~= 0
     disp('ERROR');
     return;
 end
-fprintf('nsteps = %d', nsteps);
 
 t = zeros(nsteps, 1);
 box = zeros(nsteps, dim);

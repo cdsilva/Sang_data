@@ -13,20 +13,31 @@ close all
 % save('all_atom_data.mat', 'pos','t', 'residue_ind', 'isH','isCA','box');
 
 %% load data
-load rmsd_data
-
-load folded_structure
-folded_pos = pos;
-
-load all_atom_data
+% load rmsd_data
+% 
+% load folded_structure
+% folded_pos = pos;
+% 
+% load all_atom_data
+% 
+% step = 10;
+% start = 1;
+% pos = pos(:,:,start:step:end);
+% t = t(start:step:end);
+% rmsd = rmsd(start:step:end);
+% box = box(start:step:end,:);
+% 
+% save('all_atom_data_subsampled.mat', 'pos', 't', 'residue_ind', 'isH', 'isCA', 'box', 'folded_pos', 'rmsd');
 
 %%
-step = 10;
-start = 1;
-pos = pos(:,:,start:step:end);
-t = t(start:step:end);
-rmsd = rmsd(start:step:end);
-box = box(start:step:end,:);
+load all_atom_data_subsampled
+
+% step = 1;
+% start = 500;
+% pos = pos(:,:,start:step:end);
+% t = t(start:step:end);
+% rmsd = rmsd(start:step:end);
+% box = box(start:step:end,:);
 
 nsteps = length(t);
 
@@ -43,9 +54,11 @@ rg = find_rg(pos);
 
 alpha_helix_ind = find(residue_ind <= 8 & residue_ind >= 2);
 rg_alpha_helix = find_rg(pos(alpha_helix_ind,:,:));
+rmsd_alpha_helix = calc_rmsd(pos(alpha_helix_ind,:,:), folded_pos(alpha_helix_ind, :));
 
 helix310_ind = find(residue_ind <= 14 & residue_ind >= 11);
 rg_helix310 = find_rg(pos(helix310_ind,:,:));
+rmsd_helix310 = calc_rmsd(pos(helix310_ind,:,:), folded_pos(helix310_ind, :));
 
 salt_bridge = zeros(nsteps, 1);
 ind16 = find(residue_ind == 16);
@@ -54,24 +67,10 @@ for i=1:nsteps
     salt_bridge(i) = norm(mean(pos(ind16,:,i)) - mean(pos(ind9,:,i)));
 end
 
-return
-%% calculate rmsd
-
-natoms = size(pos, 1);
-
-template = folded_pos - repmat(mean(folded_pos), natoms, 1);
-rmsd_tmp = zeros(nsteps, 1);
-for i=1:nsteps
-    Pnew = Kabsch(pos(:,:,i), template);
-    rmsd_tmp(i) = sum((Pnew(:)-template(:)).^2)/natoms;
-end
-
-figure;
-plot(t, rmsd_tmp)
-
 %% PCA
 pca_data = zeros(nsteps, size(pos,1) * size(pos,2));
 
+template = mean_center(folded_pos);
 for i=1:nsteps
     P = pos(:,:,i);
     Pnew = Kabsch(P, template);
@@ -79,7 +78,7 @@ for i=1:nsteps
 end
 mean_data = mean(pca_data);
 
-pca_data = pca_data - repmat(mean_data, nsteps, 1);
+pca_data = mean_center(pca_data);
 
 [V, D] = PCA(pca_data, 10);
 
@@ -110,6 +109,9 @@ ylabel('Projection onto PC 2')
 zlabel('Projection onto PC 3')
 title('PCA')
 
+figure;
+scatter(pca_data*V(:,1), pca_data*V(:,2),200,rmsd,'.')
+
 %% play movie
 
 % figure;
@@ -136,7 +138,7 @@ end
 %% dmaps
 
 eps = median(W(:));
-[V, D] = dmaps(W, eps, 10, 1e-5);
+[V, D] = dmaps(W, eps, 10);
 
 %% plots
 figure;
@@ -172,3 +174,26 @@ for i=2:3
     title('DMAPS')
 end
 
+figure;
+scatter3(V(:,2),V(:,3),V(:,4),200, rmsd, '.')
+xlabel('\phi_2')
+ylabel('\phi_3')
+zlabel('\phi_4')
+
+figure;
+scatter3(V(:,2),V(:,3),V(:,4),200, rmsd_alpha_helix, '.')
+xlabel('\phi_2')
+ylabel('\phi_3')
+zlabel('\phi_4')
+
+figure;
+scatter3(V(:,2),V(:,3),V(:,4),200, rmsd_helix310, '.')
+xlabel('\phi_2')
+ylabel('\phi_3')
+zlabel('\phi_4')
+
+figure;
+scatter(V(:,2),V(:,3),200, rmsd, '.')
+
+figure;
+scatter(V(:,2),V(:,3),200, rmsd_alpha_helix, '.')
