@@ -80,37 +80,36 @@ mean_data = mean(pca_data);
 
 pca_data = mean_center(pca_data);
 
-[V, D] = PCA(pca_data, 10);
+[V, D_pca] = PCA(pca_data, 10);
+pca_coords = pca_data * V;
 
+%% PCA plots
 figure;
-plot(diag(D), '.')
+plot(diag(D_pca), '.')
 xlabel('k')
 ylabel('\lambda_k')
 title('PCA')
 
-for i=1:3
-    figure;
-    plot(t, pca_data*V(:,i),'.')
-    xlabel('t')
-    ylabel(sprintf('Projection onto PC %d', i))
-    title('PCA')
-end
-
 figure;
-scatter(pca_data*V(:,1), pca_data*V(:,2),200,t,'.')
+scatter(pca_coords(:,1),pca_coords(:,2),200,rmsd,'.')
 xlabel('Projection onto PC 1')
 ylabel('Projection onto PC 2')
-title('PCA')
+title('PCA: colored by rmsd')
 
 figure;
-scatter3(pca_data*V(:,1), pca_data*V(:,2),  pca_data*V(:,3),200,t,'.')
+scatter3(pca_coords(:,1), pca_coords(:,2), pca_coords(:,3),200,rmsd,'.')
 xlabel('Projection onto PC 1')
 ylabel('Projection onto PC 2')
 zlabel('Projection onto PC 3')
-title('PCA')
+title('PCA: colored by rmsd')
 
 figure;
-scatter(pca_data*V(:,1), pca_data*V(:,2),200,rmsd,'.')
+scatter3(pca_coords(:,1), pca_coords(:,2), pca_coords(:,3),200,rmsd_helix310,'.')
+xlabel('Projection onto PC 1')
+ylabel('Projection onto PC 2')
+zlabel('Projection onto PC 3')
+title('PCA: colored by rmsd of 3-10 helix')
+
 
 %% play movie
 
@@ -138,62 +137,50 @@ end
 %% dmaps
 
 eps = median(W(:));
-[V, D] = dmaps(W, eps, 10);
+[dmaps_coords, D_dmaps] = dmaps(W, eps, 10);
 
 %% plots
 figure;
-plot(diag(D),'.')
+plot(diag(D_dmaps), '.')
+xlabel('k')
+ylabel('\lambda_k')
+title('DMAPS')
 
-for i=2:3
-    figure;
-    plot(t, V(:,i),'.')
-    xlabel('t')
-    ylabel(sprintf('\\phi_%d', i))
-    title('DMAPS')
-end
+
 
 figure;
-scatter3(V(:,2),V(:,3),V(:,4),200, t, '.')
+scatter(dmaps_coords(:,2),dmaps_coords(:,3),200,rmsd,'.')
+xlabel('\phi_2')
+ylabel('\phi_3')
+title('DMAPS: colored by rmsd')
+
+figure;
+scatter(dmaps_coords(:,2),dmaps_coords(:,3),200,dmaps_coords(:,4),'.')
+xlabel('\phi_2')
+ylabel('\phi_3')
+title('DMAPS: colored by \phi_4')
+
+figure;
+scatter3(dmaps_coords(:,2), dmaps_coords(:,3), dmaps_coords(:,4),200,rmsd,'.')
 xlabel('\phi_2')
 ylabel('\phi_3')
 zlabel('\phi_4')
-
-for i=2:3
-    figure;
-    plot(rg, V(:,i), '.')
-    xlabel('R_g')
-    ylabel(sprintf('\\phi_%d', i))
-    title('DMAPS')
-end
-
-for i=2:3
-    figure;
-    plot(rmsd, V(:,i),'.')
-    xlabel('rmsd (folded structure)')
-    ylabel(sprintf('\\phi_%d', i))
-    title('DMAPS')
-end
+title('DMAPS: colored by rmsd')
 
 figure;
-scatter3(V(:,2),V(:,3),V(:,4),200, rmsd, '.')
+scatter(dmaps_coords(:,2),dmaps_coords(:,4),200,rmsd,'.')
+xlabel('\phi_2')
+ylabel('\phi_4')
+title('DMAPS: colored by rmsd')
+
+figure;
+scatter(dmaps_coords(:,2),dmaps_coords(:,3),200,rmsd_alpha_helix,'.')
 xlabel('\phi_2')
 ylabel('\phi_3')
-zlabel('\phi_4')
+title('DMAPS: colored by rmsd of alpha helix')
 
 figure;
-scatter3(V(:,2),V(:,3),V(:,4),200, rmsd_alpha_helix, '.')
+scatter(dmaps_coords(:,2),dmaps_coords(:,4),200,rmsd_alpha_helix,'.')
 xlabel('\phi_2')
-ylabel('\phi_3')
-zlabel('\phi_4')
-
-figure;
-scatter3(V(:,2),V(:,3),V(:,4),200, rmsd_helix310, '.')
-xlabel('\phi_2')
-ylabel('\phi_3')
-zlabel('\phi_4')
-
-figure;
-scatter(V(:,2),V(:,3),200, rmsd, '.')
-
-figure;
-scatter(V(:,2),V(:,3),200, rmsd_alpha_helix, '.')
+ylabel('\phi_4')
+title('DMAPS: colored by rmsd of alpha helix')
