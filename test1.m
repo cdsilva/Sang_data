@@ -184,3 +184,16 @@ scatter(dmaps_coords(:,2),dmaps_coords(:,4),200,rmsd_alpha_helix,'.')
 xlabel('\phi_2')
 ylabel('\phi_4')
 title('DMAPS: colored by rmsd of alpha helix')
+
+figure;
+scatter(dmaps_coords(:,2),dmaps_coords(:,4),200,rmsd_helix310,'.')
+xlabel('\phi_2')
+ylabel('\phi_4')
+title('DMAPS: colored by rmsd of helix 3-10')
+
+figure;
+scatter(dmaps_coords(:,2),dmaps_coords(:,4),200,salt_bridge,'.')
+xlabel('\phi_2')
+ylabel('\phi_4')
+title('DMAPS: colored by salt bridge')
+
