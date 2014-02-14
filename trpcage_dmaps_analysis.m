@@ -164,3 +164,15 @@ xlabel('\phi_2')
 ylabel('\phi_4')
 title('DMAPS: colored by rmsd of alpha helix')
 
+%% make figure with some points highlighted
+figure;
+scatter(dmaps_coords(:,2),dmaps_coords(:,3),200,rmsd,'.')
+xlabel('\phi_2')
+ylabel('\phi_3')
+title('DMAPS: colored by rmsd')
+hold on
+ind = [100, 400, 1580, 2000, 2557, 3000];
+plot(dmaps_coords(ind,2),dmaps_coords(ind,3),'.k','markersize',40)
+for i=1:length(ind)
+    text(dmaps_coords(ind(i),2)+0.002,dmaps_coords(ind(i),3)+0.002, num2str(t(ind(i))))
+end
